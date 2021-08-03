@@ -9,7 +9,8 @@ import static com.jerezm.springsecuritypractice.security.ApplicationUserPermissi
 public enum ApplicationUserRole {
     
     STUDENT( Sets.newHashSet() ),
-    ADMIN(Sets.newHashSet(STUDENT_READ, STUDENT_WRITE, COURSE_READ, COURSE_WRITE));
+    ADMIN(Sets.newHashSet(STUDENT_READ, STUDENT_WRITE, COURSE_READ, COURSE_WRITE)),
+    ADMIN_TRAINEE(Sets.newHashSet(STUDENT_READ, COURSE_READ));
 
     private final Set<ApplicationUserPermission> permissions;
 
