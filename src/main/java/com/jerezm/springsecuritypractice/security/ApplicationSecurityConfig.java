@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static com.jerezm.springsecuritypractice.security.ApplicationUserRole.*;
+
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -39,17 +41,32 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {
-        String userName = "facuconte7";
-        String userPassword = this.passwordEncoder.encode("password");
+        String studentUserName = "facuconte7";
+        String studentUserPassword = this.passwordEncoder.encode("password7");
 
         UserDetails facuConteUser = 
             User.builder()
-                .username(userName)
-                .password(userPassword)
-                .roles("STUDENT")   // ROLE_STUDENT
+                .username(studentUserName)
+                .password(studentUserPassword)
+                .roles(STUDENT.name())   // ROLE_STUDENT
                 .build();
+
+        String adminUserName = "sebasole11";
+        String adminUserPassword = this.passwordEncoder.encode("password11");
         
-        return new InMemoryUserDetailsManager(facuConteUser);
+        UserDetails sebaSoleUser = 
+            User.builder()
+                .username(adminUserName)
+                .password(adminUserPassword)
+                .roles(ADMIN.name())   // ROLE_ADMIN
+                .build();
+
+        
+        
+        return new InMemoryUserDetailsManager(
+            facuConteUser,
+            sebaSoleUser
+        );
     }
     
     
