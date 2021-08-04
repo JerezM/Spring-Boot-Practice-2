@@ -57,7 +57,7 @@ public class StudentManagementController {
     public ResponseEntity<String> updateStudent(@PathVariable("studentId") Integer studentId,
                                                 RequestEntity<Student> requestEntity) {
 
-        Student studentToUpdate = requestEntity.getBody();
+        //Student studentToUpdate = requestEntity.getBody();
 
         String msg = "the student with the id: "+studentId+" was updated succesfully";
 
