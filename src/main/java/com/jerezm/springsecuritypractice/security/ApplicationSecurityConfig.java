@@ -3,7 +3,7 @@ package com.jerezm.springsecuritypractice.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,10 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import static com.jerezm.springsecuritypractice.security.ApplicationUserRole.*;
-import static com.jerezm.springsecuritypractice.security.ApplicationUserPermission.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
@@ -32,12 +32,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .csrf().disable() // ADDED ONLY TO TEST SOMETHING -> REMOVE LATER
             .authorizeRequests()
-            .antMatchers("/", "index").permitAll()
-            .antMatchers("/api/**").hasRole(STUDENT.name())
-            .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(STUDENT_WRITE.getPermission())
-            .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(STUDENT_WRITE.getPermission())
-            .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(STUDENT_WRITE.getPermission())
-            .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+            .antMatchers("/", "index").permitAll()            
             .anyRequest()
             .authenticated()
             .and()
@@ -55,7 +50,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             User.builder()
                 .username(studentUserName)
                 .password(studentUserPassword)
-                /* .roles(STUDENT.name())   // ROLE_STUDENT */
                 .authorities(STUDENT.getGrantedAuthorities())
                 .build();
 
@@ -66,7 +60,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             User.builder()
                 .username(adminUserName)
                 .password(adminUserPassword)
-                /* .roles(ADMIN.name())   // ROLE_ADMIN */
                 .authorities(ADMIN.getGrantedAuthorities())
                 .build();
 
@@ -77,7 +70,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             User.builder()
                 .username(adminTraineeUserName)
                 .password(adminTraineeUserPassword)
-                /* .roles(ADMINTRAINEE.name()) // ROLE_ADMIN_TRAINEE */
                 .authorities(ADMINTRAINEE.getGrantedAuthorities())
                 .build();
 
