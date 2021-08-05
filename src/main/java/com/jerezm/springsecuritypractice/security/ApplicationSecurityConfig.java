@@ -30,7 +30,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // ADDED ONLY TO TEST SOMETHING -> REMOVE LATER
             .authorizeRequests()
             .antMatchers("/", "index").permitAll()            
             .anyRequest()
