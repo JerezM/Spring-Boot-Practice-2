@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ public class StudentManagementController {
     );
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
     public ResponseEntity<List<Student>> getStudents(){
         ResponseEntity<List<Student>> responseEntity = ResponseEntity.ok(STUDENTS);
 
@@ -31,6 +33,7 @@ public class StudentManagementController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('student:write')")
     public ResponseEntity<Student> registerNewStudent(RequestEntity<Student> requestEntity) {
         Student studentToRegister = requestEntity.getBody();
 
@@ -43,6 +46,7 @@ public class StudentManagementController {
     }
 
     @DeleteMapping(path = "{studentId}")
+    @PreAuthorize("hasAuthority('student:write')")
     public ResponseEntity<String> deleteStudent(@PathVariable("studentId") Integer studentId) {
         String msg = "the student with the id: "+studentId+" was deleted succesfully";
 
@@ -54,6 +58,7 @@ public class StudentManagementController {
     }
 
     @PutMapping(path = "{studentId}")
+    @PreAuthorize("hasAuthority('student:write')")
     public ResponseEntity<String> updateStudent(@PathVariable("studentId") Integer studentId,
                                                 RequestEntity<Student> requestEntity) {
 
