@@ -16,6 +16,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import static com.jerezm.springsecuritypractice.security.ApplicationUserRole.*;
 
+import java.util.concurrent.TimeUnit;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -43,7 +45,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             .loginPage("/login").permitAll()
             .defaultSuccessUrl("/courses", true)
             .and()
-            .rememberMe(); // default to 2 weeks
+            .rememberMe()
+                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+                .key("some-key-very-secure");
             
     }
 
