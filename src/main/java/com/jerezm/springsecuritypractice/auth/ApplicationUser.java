@@ -1,14 +1,14 @@
 package com.jerezm.springsecuritypractice.auth;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class ApplicationUser implements UserDetails {
 
-    private final List<? extends GrantedAuthority> grantedAuthorities;
+    private final Set<? extends GrantedAuthority> grantedAuthorities;
     private final String password;
     private final String username;
     private final boolean isAccountNonExpired;
@@ -16,7 +16,7 @@ public class ApplicationUser implements UserDetails {
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
 
-    public ApplicationUser(List<? extends GrantedAuthority> grantedAuthorities,
+    public ApplicationUser(Set<? extends GrantedAuthority> grantedAuthorities,
                            String password, 
                            String username,
                            boolean isAccountNonExpired,
