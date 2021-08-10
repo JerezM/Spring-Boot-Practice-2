@@ -9,13 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import java.util.concurrent.TimeUnit;
 
 import com.jerezm.springsecuritypractice.auth.ApplicationUserService;
+import com.jerezm.springsecuritypractice.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,29 +37,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             /* .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
             .and() */
             .csrf().disable()
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()  
+            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(this.authenticationManager()))
             .authorizeRequests()
             .antMatchers("/", "index").permitAll()            
             .anyRequest()
-            .authenticated()
-            .and()
-            .formLogin()
-                .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/courses", true)
-                .usernameParameter("username")
-                .passwordParameter("password")
-            .and()
-            .rememberMe()
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
-                .key("some-key-very-secure")
-                .rememberMeParameter("remember-me")
-            .and()
-            .logout()
-                .logoutUrl("/logout")
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//when csrf is enable, remove this line
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "remember-me")
-                .logoutSuccessUrl("/login");
+            .authenticated();                        
             
     }
 
