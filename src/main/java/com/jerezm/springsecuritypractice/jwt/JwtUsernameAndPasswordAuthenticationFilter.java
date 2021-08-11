@@ -72,6 +72,8 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         
         //Send the token in the response
         response.addHeader("Authorization", "Bearer " + token);
+
+        chain.doFilter(request, response);
     }
 
     
