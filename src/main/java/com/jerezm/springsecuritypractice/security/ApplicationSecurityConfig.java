@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.jerezm.springsecuritypractice.auth.ApplicationUserService;
+import com.jerezm.springsecuritypractice.jwt.JwtTokenVerifier;
 import com.jerezm.springsecuritypractice.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 @Configuration
@@ -41,6 +42,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()  
             .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(this.authenticationManager()))
+            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/", "index").permitAll()            
             .anyRequest()
