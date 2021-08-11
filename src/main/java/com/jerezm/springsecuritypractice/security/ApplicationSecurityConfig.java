@@ -13,7 +13,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import javax.crypto.SecretKey;
+
 import com.jerezm.springsecuritypractice.auth.ApplicationUserService;
+import com.jerezm.springsecuritypractice.jwt.JwtConfig;
 import com.jerezm.springsecuritypractice.jwt.JwtTokenVerifier;
 import com.jerezm.springsecuritypractice.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
@@ -24,12 +27,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService applicationUserService;
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
     @Autowired
     public ApplicationSecurityConfig(PasswordEncoder passwordEncoder,
-                                     ApplicationUserService applicationUserService) {
+                                     ApplicationUserService applicationUserService,
+                                     JwtConfig jwtConfig,
+                                     SecretKey secretKey) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
+        this.jwtConfig = jwtConfig;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -41,8 +50,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()  
-            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(this.authenticationManager()))
-            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class)
+            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(this.authenticationManager(), this.jwtConfig, this.secretKey))
+            .addFilterAfter(new JwtTokenVerifier(this.jwtConfig, this.secretKey), JwtUsernameAndPasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/", "index").permitAll()            
             .anyRequest()

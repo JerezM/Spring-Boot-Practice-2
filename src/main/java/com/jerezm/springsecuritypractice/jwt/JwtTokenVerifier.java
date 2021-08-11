@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -23,26 +24,35 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 public class JwtTokenVerifier extends OncePerRequestFilter {
+
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
+
+    public JwtTokenVerifier(JwtConfig jwtConfig, SecretKey secretKey) {
+        this.jwtConfig = jwtConfig;
+        this.secretKey = secretKey;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
                                     HttpServletResponse response, 
                                     FilterChain filterChain) throws ServletException, IOException {
         
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeaderKey = this.jwtConfig.getAuthorizationHeader();
+        String authorizationHeader = request.getHeader(authorizationHeaderKey);
 
-        if (!Strings.isNullOrEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+        String tokenPrefix = this.jwtConfig.getTokenPrefix();
 
-            String token = authorizationHeader.replace("Bearer ", "");
-            String secureKey = "thishastobeasecurekeyforthesignofthetoken";
+        if (!Strings.isNullOrEmpty(authorizationHeader) && authorizationHeader.startsWith(tokenPrefix)) {
+
+            String token = authorizationHeader.replace(tokenPrefix, "");
 
             try {
 
                 Jws<Claims> claimsJws = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(secureKey.getBytes()))
+                    .setSigningKey(this.secretKey)
                     .build()
                     .parseClaimsJws(token);
 
