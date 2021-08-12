@@ -1,2 +1,2 @@
 # Spring-Boot-Practice-1
-This repo is used to practice the basics of Spring Security.
+This repo is used to practice the basics of Spring Security - using jwt-authentication.
