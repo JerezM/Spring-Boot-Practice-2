@@ -65,12 +65,14 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         
-        //Generation of the sign token                                                
+        //Generation of the sign token   
+        Integer tokenExpirationAfterDays = this.jwtConfig.getTokenExpirationAfterDays();
+        
         String token = Jwts.builder()
             .setSubject(authResult.getName())
             .claim("authorities", authResult.getAuthorities())
             .setIssuedAt(new Date())
-            .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
+            .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(tokenExpirationAfterDays)))
             .signWith(this.secretKey)
             .compact();
         
